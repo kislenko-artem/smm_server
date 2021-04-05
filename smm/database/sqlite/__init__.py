@@ -5,9 +5,10 @@ import aiosqlite
 
 from smm.config import BASE_DIR
 from smm.database.sqlite.profiles import Profiles
+from smm.database.sqlite.vk_groups import Groups
 
 
-class Methods(Profiles):
+class Methods(Profiles, Groups):
     __slots__ = ("path",)
 
     async def init(self, *args, **kwargs):

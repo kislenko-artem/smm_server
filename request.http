@@ -36,3 +36,20 @@ GET http://localhost:9999/v0/vk/profiles?q=обучение
 Accept: application/json
 
 ###
+POST http://localhost:9999/v0/vk/groups/
+Accept: application/json
+Content-Type: application/json
+
+{
+   "ident": 158405910
+}
+
+###
+GET http://localhost:9999/v0/vk/groups/
+Accept: application/json
+Content-Type: application/json
+
+###
+DELETE http://localhost:9999/v0/vk/groups/158405910
+Accept: application/json
+Content-Type: application/json

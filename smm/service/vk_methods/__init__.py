@@ -3,9 +3,11 @@ from typing import Dict, List
 
 import aiohttp
 
+from smm.database import get_connection
+
 
 class VKMethods(object):
-    __slots__ = ("token", )
+    __slots__ = ("token",)
 
     def __init__(self, token: str):
         self.token = token
@@ -42,9 +44,7 @@ class VKMethods(object):
             for d in data["response"]["items"]:
                 if d.get("type") == "profile":
                     continue
-                group_data = d.get("group")
-                r_data.append("https://vk.com/{}".format(
-                    group_data.get("screen_name")))
+                r_data.append(d.get("group"))
             if data["response"]["count"] < limit:
                 break
             await asyncio.sleep(1)
@@ -54,3 +54,29 @@ class VKMethods(object):
                 break
 
         return r_data
+
+    async def add_group(self, group_id: str):
+
+        data = await self.send_request("groups.getById", {
+            "group_id": group_id,
+        })
+        if len(data.get("response")) == 0:
+            return
+        DB = await get_connection()
+        r = data.get("response")[0]
+        await DB.group_create(name=r.get("name"),
+                              ident=r.get("id"),
+                              screen_name=r.get("screen_name"),
+                              photo_50=r.get("photo_50"),
+                              )
+
+    async def list_group(self):
+
+        DB = await get_connection()
+        data = await DB.groups_list()
+        return data
+
+    async def delete_group(self, group_id: str):
+
+        DB = await get_connection()
+        await DB.group_delete(int(group_id))
