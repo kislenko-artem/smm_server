@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict, List
+from typing import Dict
 
 import aiohttp
 
@@ -29,7 +29,7 @@ class VKMethods(object):
 
     async def get_groups_list(self,
                               query: str,
-                              max_result: int = 200) -> List[str]:
+                              max_result: int = 200) -> list:
         offset = 0
         limit = 200
         r_data = []
@@ -70,7 +70,7 @@ class VKMethods(object):
                               photo_50=r.get("photo_50"),
                               )
 
-    async def list_group(self):
+    async def list_group(self) -> list:
 
         DB = await get_connection()
         data = await DB.groups_list()
@@ -80,3 +80,21 @@ class VKMethods(object):
 
         DB = await get_connection()
         await DB.group_delete(int(group_id))
+
+    async def group_members(self, group_id: str) -> list:
+        offset = 0
+        limit = 900
+        r_data = []
+        while True:
+            data = await self.send_request("groups.getMembers", {
+                "group_id": group_id,
+                "fields":
+                    "sex,bdate,city,country,photo_max_orig,domain,has_mobile",
+            })
+            for d in data["response"]["items"]:
+                r_data.append(d)
+            if data["response"]["count"] < limit:
+                break
+            await asyncio.sleep(1)
+            offset += limit
+        return r_data

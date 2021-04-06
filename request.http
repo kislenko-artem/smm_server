@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:9999/v0/vk/profiles?q=обучение
+GET http://localhost:9999/v0/vk/profiles?q=webart
 Accept: application/json
 
 ###
@@ -51,5 +51,15 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:9999/v0/vk/groups/158405910
+Accept: application/json
+Content-Type: application/json
+
+###
+GET http://localhost:9999/v0/vk/stat/groups/32963957
+Accept: application/json
+Content-Type: application/json
+
+###
+POST http://localhost:9999/v0/vk/stat/groups/32963957
 Accept: application/json
 Content-Type: application/json

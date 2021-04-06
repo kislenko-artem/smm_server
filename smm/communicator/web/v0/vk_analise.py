@@ -1,3 +1,4 @@
+import asyncio
 from http import HTTPStatus
 
 from sanic.exceptions import InvalidUsage
@@ -51,3 +52,22 @@ class VKGroups(HTTPMethodView):
             "success": True
         }
         return json(data, HTTPStatus.OK)
+
+
+stat_cache = {}
+
+
+class VKStatGroups(HTTPMethodView):
+
+    async def get(self, request, id: str):
+        if stat_cache.get(id) is None:
+            return json([], HTTPStatus.OK)
+        return json(stat_cache.get(id), HTTPStatus.OK)
+
+    async def waiter(self, id: str):
+        data = await vk_methods.VKMethods(cfg.vk_token).group_members(id)
+        stat_cache[id] = data
+
+    async def post(self, request, id: str):
+        asyncio.create_task(self.waiter(id))
+        return json({"success": True}, HTTPStatus.OK)
