@@ -7,6 +7,7 @@ from smm.cmd import Cmd
 
 
 if __name__ == "__main__":
+    print("THERE SHOULD BE GIT HASH: 1.0")
     app = Sanic("smmhelp")
     cfg = config.init()
     WebRouter(app)

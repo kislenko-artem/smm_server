@@ -3,7 +3,7 @@ Accept: application/json
 
 ###
 
-GET {{host}}/count/profiles/4
+GET {{host}}/count/profiles/1
 Accept: application/json
 
 ###
