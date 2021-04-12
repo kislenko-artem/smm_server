@@ -1,11 +1,19 @@
 from typing import NewType, List
+from dataclasses import dataclass
+from datetime import datetime
 
 from smm.database import get_connection
 
 ProfileType = NewType("ProfileType", int)
 
-InstagramGroup: ProfileType(1)
-VKGroup: ProfileType(2)
+InstagramGroup: ProfileType = ProfileType(1)
+VKGroup: ProfileType = ProfileType(2)
+
+
+@dataclass(frozen=True)
+class Count:
+    count: int
+    date: datetime
 
 
 class Profiles(object):
@@ -36,6 +44,19 @@ class Profiles(object):
                 name=d.get("name"),
                 profile_type=d.get("profile_type"),
                 ident=d.get("ident"),
+            ))
+        return p_list
+
+    async def counts(self, profile_id: int) -> List[Count]:
+        p_list: List[Count] = []
+
+        DB = await get_connection()
+        data = await DB.profile_count(profile_id)
+
+        for d in data:
+            p_list.append(Count(
+                count=d.get("count"),
+                date=d.get("dt_create"),
             ))
         return p_list
 

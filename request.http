@@ -1,20 +1,25 @@
-GET http://localhost:9999/v0/profiles/
+GET {{host}}/profiles/
 Accept: application/json
 
 ###
 
-POST http://localhost:9999/v0/profiles/
+GET {{host}}/count/profiles/4
+Accept: application/json
+
+###
+
+POST {{host}}/profiles/
 Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "sdfsdf",
+  "name": "nogti_zhe",
   "profile_type": 1,
-  "ident": "sdfsdf"
+  "ident": "4798404424"
 }
 ###
 
-PUT http://localhost:9999/v0/profiles/10
+PUT {{host}}/profiles/10
 Accept: application/json
 Content-Type: application/json
 
@@ -26,17 +31,17 @@ Content-Type: application/json
 ###
 
 
-DELETE http://localhost:9999/v0/profiles/11
+DELETE {{host}}/profiles/11
 Accept: application/json
 Content-Type: application/json
 
 ###
 
-GET http://localhost:9999/v0/vk/profiles?q=webart
+GET {{host}}/vk/profiles?q=webart
 Accept: application/json
 
 ###
-POST http://localhost:9999/v0/vk/groups/
+POST {{host}}/vk/groups/
 Accept: application/json
 Content-Type: application/json
 
@@ -45,21 +50,21 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:9999/v0/vk/groups/
+GET {{host}}/vk/groups/
 Accept: application/json
 Content-Type: application/json
 
 ###
-DELETE http://localhost:9999/v0/vk/groups/158405910
+DELETE {{host}}/vk/groups/158405910
 Accept: application/json
 Content-Type: application/json
 
 ###
-GET http://localhost:9999/v0/vk/stat/groups/32963957
+GET {{host}}/vk/stat/groups/32963957
 Accept: application/json
 Content-Type: application/json
 
 ###
-POST http://localhost:9999/v0/vk/stat/groups/32963957
+POST {{host}}/vk/stat/groups/32963957
 Accept: application/json
 Content-Type: application/json

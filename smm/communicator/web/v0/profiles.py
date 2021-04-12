@@ -51,3 +51,15 @@ class Profiles(HTTPMethodView):
 
         await profiles.Profiles(id=int(id)).delete()
         return json({"success": True}, HTTPStatus.OK)
+
+
+class Count(HTTPMethodView):
+    async def get(self, request, id: str):
+        g = await profiles.Profiles().counts(int(id))
+        counts = []
+        for d in g:
+            counts.append(d.__dict__)
+        data = {
+            "results": counts
+        }
+        return json(data, HTTPStatus.OK)

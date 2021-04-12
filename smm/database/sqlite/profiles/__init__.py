@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 from smm.database.abstract import profile
 
@@ -9,6 +10,16 @@ class Profiles(profile.Profiles):
         data = await self.select(
             "SELECT id, name, profile_type, ident FROM profiles",
             ["id", "name", "profile_type", "ident"])
+        return data
+
+    async def profile_count(self, profile_id: int) -> list:
+        r_data = []
+        data = await self.select(
+            "SELECT dt_create, count FROM profile_count WHERE profile_id = $1 ORDER BY dt_create",
+            ["dt_create", "count"], (profile_id,))
+        for d in r_data:
+            r_data.append({"dt_create": datetime.utcfromtimestamp(d["dt_create"]),
+                           "count": d["count"]})
         return data
 
     async def profile_create(self,
