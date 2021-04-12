@@ -9,6 +9,8 @@ class AppConfig(Config):
     app_host = field("APP_HOST", default="0.0.0.0")
     app_port = field("APP_PORT", default=9999)
 
+    insta_cookie = field("INSTA_COOKIE")
+
     vk_token = field("VK_TOKEN")
 
 
