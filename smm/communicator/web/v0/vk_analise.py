@@ -62,6 +62,38 @@ class VKStatGroups(HTTPMethodView):
     async def get(self, request, id: str):
         if stat_cache.get(id) is None:
             return json([], HTTPStatus.OK)
+        if request.args.get("age"):
+            data = []
+            classifacator = {}
+            for d in stat_cache.get(id):
+                groupKey = d.get('bdate')
+                if groupKey is not None and len(d.get('bdate').split(".")) == 3:
+                    groupKey = d.get('bdate').split(".")[2]
+                if groupKey not in classifacator:
+                    classifacator[groupKey] = 1
+                    continue
+                classifacator[groupKey] += 1
+            for key in classifacator:
+                data.append({"name": key, "value": classifacator[key]})
+
+            data.sort(key=lambda x: x["value"], reverse=True)
+            return json(data, HTTPStatus.OK)
+        if request.args.get("geography"):
+            data = []
+            classifacator = {}
+            for d in stat_cache.get(id):
+                groupKey = d.get('city')
+                if groupKey is not None:
+                    groupKey = d.get('city').get('title')
+                if groupKey not in classifacator:
+                    classifacator[groupKey] = 1
+                    continue
+                classifacator[groupKey] += 1
+            for key in classifacator:
+                data.append({"name": key, "value": classifacator[key]})
+
+            data.sort(key=lambda x: x["value"], reverse=True)
+            return json(data, HTTPStatus.OK)
         return json(stat_cache.get(id), HTTPStatus.OK)
 
     async def waiter(self, id: str):

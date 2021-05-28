@@ -2,6 +2,7 @@ import asyncio
 from typing import Dict
 
 import aiohttp
+from sanic.log import logger
 
 from smm.database import get_connection
 
@@ -41,6 +42,8 @@ class VKMethods(object):
                 "limit": str(limit),
                 "offset": str(offset)
             })
+            if len(data["response"]["items"]) == 0:
+                break
             for d in data["response"]["items"]:
                 if d.get("type") == "profile":
                     continue
@@ -90,9 +93,15 @@ class VKMethods(object):
                 "group_id": group_id,
                 "fields":
                     "sex,bdate,city,country,photo_max_orig,domain,has_mobile",
+                "limit": str(limit),
+                "offset": str(offset)
             })
+            if len(data["response"]["items"]) == 0:
+                break
             for d in data["response"]["items"]:
                 r_data.append(d)
+            logger.info(
+                f"group_members: group_id {group_id} len {len(r_data)}, limit {limit}, total {data['response']['count']}")
             if data["response"]["count"] < limit:
                 break
             await asyncio.sleep(1)
