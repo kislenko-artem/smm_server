@@ -103,3 +103,10 @@ class VKStatGroups(HTTPMethodView):
     async def post(self, request, id: str):
         asyncio.create_task(self.waiter(id))
         return json({"success": True}, HTTPStatus.OK)
+
+
+class VKWall(HTTPMethodView):
+
+    async def get(self, request, id: str):
+        data = await vk_methods.VKMethods(cfg.vk_token).group_wall(id)
+        return json(data, HTTPStatus.OK)

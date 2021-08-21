@@ -107,3 +107,27 @@ class VKMethods(object):
             await asyncio.sleep(1)
             offset += limit
         return r_data
+
+    async def group_wall(self, group_id: str) -> list:
+        offset = 0
+        limit = 900
+        r_data = []
+        while True:
+            data = await self.send_request("wall.get", {
+                "domain": group_id,
+                "fields":
+                    "post_type,date,from_id,owner_id,id,text,attachments,comments,likes,reposts,views",
+                "limit": str(limit),
+                "offset": str(offset)
+            })
+            if len(data["response"]["items"]) == 0:
+                break
+            for d in data["response"]["items"]:
+                r_data.append(d)
+            logger.info(
+                f"group_wall: group_id {group_id} len {len(r_data)}, limit {limit}, total {data['response']['count']}")
+            if data["response"]["count"] < limit:
+                break
+            await asyncio.sleep(1)
+            offset += limit
+        return r_data
