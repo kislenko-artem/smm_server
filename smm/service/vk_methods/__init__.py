@@ -120,6 +120,9 @@ class VKMethods(object):
                 "limit": str(limit),
                 "offset": str(offset)
             })
+            if "response" not in data:
+                print("error data", data)
+                break
             if len(data["response"]["items"]) == 0:
                 break
             for d in data["response"]["items"]:
