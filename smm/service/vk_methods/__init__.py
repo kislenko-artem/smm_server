@@ -86,14 +86,14 @@ class VKMethods(object):
 
     async def group_members(self, group_id: str) -> list:
         offset = 0
-        limit = 900
+        limit = 1000
         r_data = []
         while True:
             data = await self.send_request("groups.getMembers", {
                 "group_id": group_id,
                 "fields":
                     "sex,bdate,city,country,photo_max_orig,domain,has_mobile",
-                "limit": str(limit),
+                "count": str(limit),
                 "offset": str(offset)
             })
             if len(data["response"]["items"]) == 0:
@@ -110,14 +110,14 @@ class VKMethods(object):
 
     async def group_wall(self, group_id: str) -> list:
         offset = 0
-        limit = 900
+        limit = 100
         r_data = []
         while True:
             data = await self.send_request("wall.get", {
                 "domain": group_id,
                 "fields":
                     "post_type,date,from_id,owner_id,id,text,attachments,comments,likes,reposts,views",
-                "limit": str(limit),
+                "count": str(limit),
                 "offset": str(offset)
             })
             if "response" not in data:
