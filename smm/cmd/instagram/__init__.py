@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import aiohttp
 
 from smm import config
-from smm.service.profiles import Profiles, InstagramGroup
+from smm.service.profiles import Profile, InstagramGroup
 
 if TYPE_CHECKING:
     from smm.cmd import Cmd
@@ -14,7 +14,8 @@ HOUR = 3600
 async def watch_profile_followers(cmd: "Cmd"):
     cfg = config.init()
     while cmd.is_run:
-        profiles = await Profiles().list()
+        return
+        profiles = await Profile().list()
         for p in profiles:
             if p.profile_type != InstagramGroup:
                 continue

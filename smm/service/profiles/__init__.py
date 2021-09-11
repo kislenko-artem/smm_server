@@ -16,7 +16,7 @@ class Count:
     date: datetime
 
 
-class Profiles(object):
+class Profile(object):
     id: int
     name: str
     profile_type: ProfileType
@@ -32,14 +32,14 @@ class Profiles(object):
         self.profile_type = profile_type
         self.ident = ident
 
-    async def list(self) -> List["Profiles"]:
-        p_list: List["Profiles"] = []
+    async def list(self) -> List["Profile"]:
+        p_list: List["Profile"] = []
 
         DB = await get_connection()
         profiles = await DB.profile_list()
 
         for d in profiles:
-            p_list.append(Profiles(
+            p_list.append(Profile(
                 id=d.get("id"),
                 name=d.get("name"),
                 profile_type=d.get("profile_type"),

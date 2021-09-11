@@ -68,3 +68,89 @@ Content-Type: application/json
 POST {{host}}/vk/stat/groups/32963957
 Accept: application/json
 Content-Type: application/json
+
+### Категории
+GET {{host}}/categories/sdf
+Accept: application/json
+Content-Type: application/json
+
+###
+POST {{host}}/categories/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Sdf",
+  "category_type": "sdf"
+}
+
+###
+DELETE {{host}}/categories/5
+Accept: application/json
+Content-Type: application/json
+
+### Клиенты
+GET {{host}}/clients/
+Accept: application/json
+Content-Type: application/json
+
+###
+POST {{host}}/clients/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Sdf",
+  "phone": "sdf",
+  "comment": "sdf"
+}
+
+###
+PUT {{host}}/clients/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "----",
+  "phone": "sdf",
+  "comment": "sdf"
+}
+
+###
+DELETE {{host}}/clients/2
+Accept: application/json
+Content-Type: application/json
+
+### Поступления
+GET {{host}}/incomes/
+Accept: application/json
+Content-Type: application/json
+
+###
+POST {{host}}/incomes/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Sdf",
+  "price": 50,
+  "category_id": 6,
+  "client_id": 1
+}
+
+###
+PUT {{host}}/incomes/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "----",
+  "price": 50,
+  "category_id": 6,
+  "client_id": 1
+}
+
+###
+DELETE {{host}}/incomes/2
+Accept: application/json
+Content-Type: application/json

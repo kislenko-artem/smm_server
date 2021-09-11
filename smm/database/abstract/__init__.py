@@ -16,3 +16,6 @@ class Methods(ABC):
 
     async def execute(self, query: str, parameters: Iterable[Any] = None):
         raise NotImplemented("")
+
+    async def insert(self, query: str, parameters: Iterable[Any] = None) -> int:
+        raise NotImplemented("")

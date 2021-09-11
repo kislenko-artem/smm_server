@@ -13,7 +13,7 @@ class Profiles(HTTPMethodView):
         if id != "":
             raise InvalidUsage("wrong router",
                                status_code=HTTPStatus.BAD_REQUEST)
-        g = await profiles.Profiles().list()
+        g = await profiles.Profile().list()
         profile_list = []
         for d in g:
             profile_list.append(d.__dict__)
@@ -27,10 +27,10 @@ class Profiles(HTTPMethodView):
             raise InvalidUsage("wrong router",
                                status_code=HTTPStatus.BAD_REQUEST)
 
-        await profiles.Profiles(name=request.json.get("name"),
-                                ident=request.json.get("ident"),
-                                profile_type=request.json.get("profile_type"),
-                                ).create()
+        await profiles.Profile(name=request.json.get("name"),
+                               ident=request.json.get("ident"),
+                               profile_type=request.json.get("profile_type"),
+                               ).create()
         return json({"success": True}, HTTPStatus.OK)
 
     async def put(self, request, id):
@@ -38,10 +38,10 @@ class Profiles(HTTPMethodView):
             raise InvalidUsage("wrong paramter",
                                status_code=HTTPStatus.BAD_REQUEST)
 
-        await profiles.Profiles(name=request.json.get("name"),
-                                ident=request.json.get("ident"),
-                                profile_type=request.json.get("profile_type"),
-                                id=int(id)).update()
+        await profiles.Profile(name=request.json.get("name"),
+                               ident=request.json.get("ident"),
+                               profile_type=request.json.get("profile_type"),
+                               id=int(id)).update()
         return json({"success": True}, HTTPStatus.OK)
 
     async def delete(self, request, id):
@@ -49,13 +49,13 @@ class Profiles(HTTPMethodView):
             raise InvalidUsage("wrong paramter",
                                status_code=HTTPStatus.BAD_REQUEST)
 
-        await profiles.Profiles(id=int(id)).delete()
+        await profiles.Profile(id=int(id)).delete()
         return json({"success": True}, HTTPStatus.OK)
 
 
 class Count(HTTPMethodView):
     async def get(self, request, id: str):
-        g = await profiles.Profiles().counts(int(id))
+        g = await profiles.Profile().counts(int(id))
         counts = []
         for d in g:
             counts.append(d.__dict__)
