@@ -41,7 +41,6 @@ class Methods(Profiles, Groups, Business):
     async def insert(self, query: str, parameters: Iterable[Any] = None) -> int:
         async with aiosqlite.connect(self.path) as db:
             async with db.execute(query, parameters) as cursor:
-                await db.execute(query, parameters)
                 id = cursor.lastrowid
             await db.commit()
         return id

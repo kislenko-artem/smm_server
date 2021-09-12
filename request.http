@@ -70,12 +70,12 @@ Accept: application/json
 Content-Type: application/json
 
 ### Категории
-GET {{host}}/categories/sdf
+GET {{host}}/business/categories/sdf
 Accept: application/json
 Content-Type: application/json
 
 ###
-POST {{host}}/categories/
+POST {{host}}/business/categories/
 Accept: application/json
 Content-Type: application/json
 
@@ -85,17 +85,17 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{host}}/categories/5
+DELETE {{host}}/business/categories/5
 Accept: application/json
 Content-Type: application/json
 
 ### Клиенты
-GET {{host}}/clients/
+GET {{host}}/business/clients/
 Accept: application/json
 Content-Type: application/json
 
 ###
-POST {{host}}/clients/
+POST {{host}}/business/clients/
 Accept: application/json
 Content-Type: application/json
 
@@ -106,7 +106,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/clients/1
+PUT {{host}}/business/clients/1
 Accept: application/json
 Content-Type: application/json
 
@@ -117,17 +117,17 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{host}}/clients/2
+DELETE {{host}}/business/clients/2
 Accept: application/json
 Content-Type: application/json
 
 ### Поступления
-GET {{host}}/incomes/
+GET {{host}}/business/incomes/
 Accept: application/json
 Content-Type: application/json
 
 ###
-POST {{host}}/incomes/
+POST {{host}}/business/incomes/
 Accept: application/json
 Content-Type: application/json
 
@@ -139,7 +139,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/incomes/1
+PUT {{host}}/business/incomes/1
 Accept: application/json
 Content-Type: application/json
 
@@ -151,6 +151,6 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{host}}/incomes/2
+DELETE {{host}}/business/incomes/2
 Accept: application/json
 Content-Type: application/json

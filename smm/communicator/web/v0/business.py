@@ -2,12 +2,12 @@ from http import HTTPStatus
 
 from sanic.exceptions import InvalidUsage
 from sanic.response import json
-from sanic.views import HTTPMethodView
 
+from smm.communicator.web.v0.base import Base
 from smm.service import business
 
 
-class Categories(HTTPMethodView):
+class Categories(Base):
     async def get(self, request, id):
         g = await business.Category().list()
         d_list = []
@@ -40,7 +40,7 @@ class Categories(HTTPMethodView):
         return json({"success": True}, HTTPStatus.OK)
 
 
-class Clients(HTTPMethodView):
+class Clients(Base):
     async def get(self, request, id):
         g = await business.Client().list()
         d_list = []
@@ -88,7 +88,7 @@ class Clients(HTTPMethodView):
         return json({"success": True}, HTTPStatus.OK)
 
 
-class Incomes(HTTPMethodView):
+class Incomes(Base):
     async def get(self, request, id):
         g = await business.Income().list()
         d_list = []
