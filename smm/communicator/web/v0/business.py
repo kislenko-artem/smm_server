@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from datetime import datetime
 
 from sanic.exceptions import InvalidUsage
 from sanic.response import json
@@ -114,7 +115,8 @@ class Incomes(Base):
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             client_id=request.json.get("client_id"),
-            dt_provision=request.json.get("dt_provision")
+            comments=request.json.get("comments"),
+            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%d-%m-%Y %H:%M:%S")
         )
         d = await income.add()
         return json({"id": d.id}, HTTPStatus.OK)
@@ -130,7 +132,8 @@ class Incomes(Base):
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             client_id=request.json.get("client_id"),
-            dt_provision=request.json.get("dt_provision")
+            comments=request.json.get("comments"),
+            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%d-%m-%Y %H:%M:%S")
         )
         await income.update()
         return json({"success": True}, HTTPStatus.OK)
