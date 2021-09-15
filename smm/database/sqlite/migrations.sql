@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS vk_groups
     screen_name TEXT not null,
     photo_50 TEXT
 );
+--start:
 --split
 CREATE TABLE IF NOT EXISTS business_categories
 (
@@ -53,7 +54,6 @@ CREATE TABLE IF NOT EXISTS business_clients
     comments TEXT DEFAULT null,
     dt_create INTEGER default (datetime('now', 'unixepoch'))
 );
---start:
 --split
 ALTER TABLE business_clients ADD COLUMN age INTEGER DEFAULT Null;
 --split
