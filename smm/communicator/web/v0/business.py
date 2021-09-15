@@ -47,11 +47,11 @@ class Clients(Base):
         d_list = []
         for d in g:
             income = d.__dict__
-            if income.get("category") is not None:
+            if income.get("category"):
                 income["category"] = income.get("category").__dict__
-            if income.get("dt_appearance") is not None:
+            if income.get("dt_appearance"):
                 income["dt_appearance"] = income.get("dt_appearance").isoformat()
-            if income.get("dt_create") is not None:
+            if income.get("dt_create"):
                 income["dt_create"] = income.get("dt_create").isoformat()
             d_list.append(income)
         data = {
@@ -123,13 +123,19 @@ class Incomes(Base):
         d_list = []
         for d in g:
             income = d.__dict__
-            if income.get("client") is not None:
+            if income.get("client"):
                 income["client"] = income.get("client").__dict__
-            if income.get("category") is not None:
+                if income["client"].get("category"):
+                    income["client"]["category"] = income["client"].get("category").__dict__
+                if income["client"].get("dt_appearance"):
+                    income["client"]["dt_appearance"] = income["client"].get("dt_appearance").isoformat()
+                if income["client"].get("dt_create"):
+                    income["client"]["dt_create"] = income["client"].get("dt_create").isoformat()
+            if income.get("category"):
                 income["category"] = income.get("category").__dict__
-            if income.get("dt_provision") is not None:
+            if income.get("dt_provision"):
                 income["dt_provision"] = income.get("dt_provision").isoformat()
-            if income.get("dt_create") is not None:
+            if income.get("dt_create"):
                 income["dt_create"] = income.get("dt_create").isoformat()
             d_list.append(income)
         data = {
