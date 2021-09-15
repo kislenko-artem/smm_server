@@ -63,8 +63,6 @@ ALTER TABLE business_clients ADD COLUMN business_categories_id INTEGER DEFAULT N
 --split
 ALTER TABLE business_clients ADD COLUMN note INTEGER DEFAULT Null;
 --split
-DROP TABLE business_income;
---split
 CREATE TABLE IF NOT EXISTS business_income
 (
     id INTEGER
