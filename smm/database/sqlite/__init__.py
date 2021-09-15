@@ -15,10 +15,19 @@ class Methods(Profiles, Groups, Business):
     async def init(self, *args, **kwargs):
         to_migrate_script = path.join(BASE_DIR, 'database', 'sqlite', 'migrations.sql')
         self.path = path.join(BASE_DIR, 'sqlite_python.db')
+        sql_text = ""
         async with aiosqlite.connect(self.path) as db:
             with open(to_migrate_script) as f:
-                for statement in f.read().split("--split"):
+                sql_text = f.read()
+                data_array = sql_text.split("--start:")
+                if len(data_array) == 1:
+                    return
+                for statement in data_array[1].split("--split"):
                     await db.execute(statement)
+            with open(to_migrate_script, "w") as f:
+                sql_text = sql_text.replace("\n--start:", "")
+                sql_text += "\r\n--start:"
+                f.write(sql_text)
             await db.commit()
 
     async def close(self):

@@ -53,18 +53,28 @@ CREATE TABLE IF NOT EXISTS business_clients
     comments TEXT DEFAULT null,
     dt_create INTEGER default (datetime('now', 'unixepoch'))
 );
+--start:
+--split
+ALTER TABLE business_clients ADD COLUMN age INTEGER DEFAULT Null;
+--split
+ALTER TABLE business_clients ADD COLUMN dt_appearance INTEGER DEFAULT Null;
+--split
+ALTER TABLE business_clients ADD COLUMN business_categories_id INTEGER DEFAULT Null;
+--split
+ALTER TABLE business_clients ADD COLUMN note INTEGER DEFAULT Null;
+--split
+DROP TABLE business_income;
 --split
 CREATE TABLE IF NOT EXISTS business_income
 (
     id INTEGER
         constraint business_income_pk
             primary key autoincrement,
-    name TEXT not null,
     price REAL DEFAULT 0,
-    business_clients_id INTEGER not null,
+    business_clients_id INTEGER DEFAULT null,
     business_categories_id INTEGER not null,
     comments TEXT DEFAULT null,
+    duration REAL DEFAULT null,
     dt_provision INTEGER default (datetime('now', 'unixepoch')),
     dt_create INTEGER default (datetime('now', 'unixepoch'))
 );
---split

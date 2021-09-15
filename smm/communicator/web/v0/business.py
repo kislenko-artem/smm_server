@@ -46,7 +46,14 @@ class Clients(Base):
         g = await business.Client().list()
         d_list = []
         for d in g:
-            d_list.append(d.__dict__)
+            income = d.__dict__
+            if income.get("category") is not None:
+                income["category"] = income.get("category").__dict__
+            if income.get("dt_appearance") is not None:
+                income["dt_appearance"] = income.get("dt_appearance").isoformat()
+            if income.get("dt_create") is not None:
+                income["dt_create"] = income.get("dt_create").isoformat()
+            d_list.append(income)
         data = {
             "results": d_list
         }
@@ -61,8 +68,18 @@ class Clients(Base):
             name=request.json.get("name"),
             phone=request.json.get("phone"),
             email=request.json.get("email"),
-            comments=request.json.get("comments")
+            comments=request.json.get("comments"),
+            age=request.json.get("age"),
+            note=request.json.get("note"),
         )
+        if request.json.get("dt_appearance"):
+            data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+        if request.json.get("category_id"):
+            categories_index = {}
+            categories = await business.Category.list()
+            for d in categories:
+                categories_index[d.id] = d
+            data.category = categories_index[request.json.get("category_id")]
         d = await data.add()
         return json({"id": d.id}, HTTPStatus.OK)
 
@@ -76,9 +93,20 @@ class Clients(Base):
             name=request.json.get("name"),
             phone=request.json.get("phone"),
             email=request.json.get("email"),
-            comments=request.json.get("comments")
+            comments=request.json.get("comments"),
+            age=request.json.get("age"),
+            note=request.json.get("note"),
         )
-        d = await data.update()
+        if request.json.get("dt_appearance"):
+            data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+        if request.json.get("category_id") is not None:
+            categories_index = {}
+            categories = await business.Category.list()
+            for d in categories:
+                categories_index[d.id] = d
+            data.category = categories_index[request.json.get("category_id")]
+
+        await data.update()
         return json({"success": True}, HTTPStatus.OK)
 
     async def delete(self, request, id):
@@ -99,6 +127,10 @@ class Incomes(Base):
                 income["client"] = income.get("client").__dict__
             if income.get("category") is not None:
                 income["category"] = income.get("category").__dict__
+            if income.get("dt_provision") is not None:
+                income["dt_provision"] = income.get("dt_provision").isoformat()
+            if income.get("dt_create") is not None:
+                income["dt_create"] = income.get("dt_create").isoformat()
             d_list.append(income)
         data = {
             "results": d_list
@@ -111,12 +143,12 @@ class Incomes(Base):
                                status_code=HTTPStatus.BAD_REQUEST)
 
         income = await business.Income().init(
-            name=request.json.get("name"),
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
-            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%d-%m-%Y %H:%M:%S")
+            duration=request.json.get("duration"),
+            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
         )
         d = await income.add()
         return json({"id": d.id}, HTTPStatus.OK)
@@ -128,12 +160,12 @@ class Incomes(Base):
 
         income = await business.Income().init(
             id=id,
-            name=request.json.get("name"),
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
-            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%d-%m-%Y %H:%M:%S")
+            duration=request.json.get("duration"),
+            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
         )
         await income.update()
         return json({"success": True}, HTTPStatus.OK)
