@@ -52,16 +52,12 @@ CREATE TABLE IF NOT EXISTS business_clients
     phone TEXT DEFAULT null,
     email TEXT DEFAULT null,
     comments TEXT DEFAULT null,
-    dt_create INTEGER default (datetime('now', 'unixepoch'))
+    dt_create INTEGER default (datetime('now', 'unixepoch')),
+    age INTEGER DEFAULT Null,
+    dt_appearance INTEGER DEFAULT Null,
+    business_categories_id INTEGER DEFAULT Null,
+    note INTEGER DEFAULT Null
 );
---split
-ALTER TABLE business_clients ADD COLUMN age INTEGER DEFAULT Null;
---split
-ALTER TABLE business_clients ADD COLUMN dt_appearance INTEGER DEFAULT Null;
---split
-ALTER TABLE business_clients ADD COLUMN business_categories_id INTEGER DEFAULT Null;
---split
-ALTER TABLE business_clients ADD COLUMN note INTEGER DEFAULT Null;
 --split
 CREATE TABLE IF NOT EXISTS business_income
 (
