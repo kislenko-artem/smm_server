@@ -90,7 +90,7 @@ class Client(object):
                 note=d.get("note"),
             )
             if d.get("business_categories_id") and len(categories_index) > 0:
-                c.category = categories_index[d.get("business_categories_id")]
+                c.category = categories_index.get(d.get("business_categories_id"))
             c_list.append(c)
         return c_list
 
