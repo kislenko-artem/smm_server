@@ -126,7 +126,7 @@ class Incomes(Base):
             if income.get("client"):
                 income["client"] = income.get("client").__dict__
                 if income["client"].get("category"):
-                    income["client"]["category"] = income["client"].get("category").__dict__
+                    income["client"]["category"] = income["client"].get("category")
                 if income["client"].get("dt_appearance"):
                     income["client"]["dt_appearance"] = income["client"].get("dt_appearance").isoformat()
                 if income["client"].get("dt_create"):
