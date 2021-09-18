@@ -124,16 +124,14 @@ class Incomes(Base):
         for d in g:
             income = d.__dict__
             if income.get("client"):
-                try:
+                if isinstance(income.get("client"), dict) is False:
                     income["client"] = income.get("client").__dict__
-                    if income["client"].get("category"):
-                        income["client"]["category"] = income["client"].get("category")
-                    if income["client"].get("dt_appearance"):
-                        income["client"]["dt_appearance"] = income["client"].get("dt_appearance")
-                    if income["client"].get("dt_create"):
-                        income["client"]["dt_create"] = income["client"].get("dt_create")
-                except Exception:
-                    pass
+                if isinstance(income["client"].get("category"), dict) is False:
+                    income["client"]["category"] = income["client"].get("category").__dict__
+                if isinstance(income["client"].get("dt_appearance"), str) is False:
+                    income["client"]["dt_appearance"] = income["client"].get("dt_appearance").isoformat()
+                if isinstance(income["client"].get("dt_create"), str) is False:
+                    income["client"]["dt_create"] = income["client"].get("dt_create").isoformat()
             if income.get("category"):
                 income["category"] = income.get("category").__dict__
             if income.get("dt_provision"):
