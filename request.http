@@ -102,7 +102,8 @@ Content-Type: application/json
 {
   "name": "Sdf",
   "phone": "sdf",
-  "comment": "sdf"
+  "comment": "sdf",
+  "type_client_id": "sdf"
 }
 
 ###
@@ -122,7 +123,7 @@ Accept: application/json
 Content-Type: application/json
 
 ### Поступления
-GET {{host}}/business/incomes/
+GET {{host}}/business/incomes/?dt_start=2020-09-17T14:29:39&dt_end=2021-09-17T14:29:39
 Accept: application/json
 Content-Type: application/json
 

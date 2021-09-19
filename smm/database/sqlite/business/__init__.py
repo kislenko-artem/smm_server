@@ -24,8 +24,8 @@ class Business(business.Business):
     async def list_clients(self) -> list:
         r_data = []
         data = await self.select(
-            "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note FROM business_clients",
-            ["id", "name", "phone", "email", "comments", "dt_create", "age", "dt_appearance", "business_categories_id", "note"])
+            "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note, type_categories_id FROM business_clients",
+            ["id", "name", "phone", "email", "comments", "dt_create", "age", "dt_appearance", "business_categories_id", "note", "type_categories_id"])
         for d in data:
             item = {
                 "dt_create": datetime.utcfromtimestamp(d["dt_create"]),
@@ -35,7 +35,8 @@ class Business(business.Business):
                 "email": d["email"],
                 "comments": d["comments"],
                 "age": d["age"],
-                "business_categories_id": d["business_categories_id"],
+                "business_categories_id": d.get("business_categories_id"),
+                "type_categories_id": d.get("type_categories_id"),
                 "note": d["note"],
             }
             if d["dt_appearance"] is not None:
@@ -45,40 +46,53 @@ class Business(business.Business):
         return r_data
 
     async def add_client(self, name: str, phone: str, email: str, comments: str, age: int = None,
-                         dt_appearance: datetime = None, business_categories_id: int = None, note: int = None) -> int:
+                         dt_appearance: datetime = None, business_categories_id: int = None, note: int = None,
+                         type_categories_id: int = None) -> int:
         dt_appearance_int = None
         if dt_appearance is not None:
             dt_appearance_int = time.mktime(dt_appearance.timetuple())
         id = await self.insert(
             '''INSERT INTO business_clients 
-            (name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ''',
+            (name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, type_categories_id, note) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ''',
             (name, phone, email, comments, time.mktime(datetime.now().timetuple()), age, dt_appearance_int,
-             business_categories_id, note))
+             business_categories_id, type_categories_id, note))
         return id
 
     async def update_client(self, id: int, name: str, phone: str, email: str, comments: str, age: int = None,
-                            dt_appearance: datetime = None, business_categories_id: int = None, note: int = None):
+                            dt_appearance: datetime = None, business_categories_id: int = None, note: int = None,
+                            type_categories_id: int = None):
         dt_appearance_int = None
         if dt_appearance is not None:
             dt_appearance_int = time.mktime(dt_appearance.timetuple())
         await self.execute(
             '''UPDATE business_clients 
             SET name=$1, phone=$2, email=$3, comments=$4, age=$5, 
-                dt_appearance=$6, business_categories_id=$7, note=$8 
-            WHERE id = $9''',
-            (name, phone, email, comments, age, dt_appearance_int, business_categories_id, note, id,))
+                dt_appearance=$6, business_categories_id=$7, type_categories_id=$8, note=$9 
+            WHERE id = $10''',
+            (name, phone, email, comments, age, dt_appearance_int, business_categories_id, type_categories_id, note, id,))
 
     async def del_client(self, id: int):
         await self.execute(
             '''DELETE FROM business_clients WHERE id = $1''', (id,))
 
-    async def list_incomes(self) -> list:
+    async def list_incomes(self, dt_start: datetime = None, dt_end: datetime = None) -> list:
         r_data = []
+        params = []
+        conditions = []
+        query = "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income "
+        if dt_start:
+            params.append(time.mktime(dt_start.timetuple()))
+            conditions.append("dt_provision > ${}".format(len(params)))
+        if dt_end:
+            params.append(time.mktime(dt_end.timetuple()))
+            conditions.append("dt_provision < ${}".format(len(params)))
+        if conditions:
+            query += "WHERE {}".format(" AND ".join(conditions))
         data = await self.select(
-            "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income",
+            query,
             ["id", "price", "business_clients_id", "business_categories_id", "comments", "dt_provision",
-             "dt_create", "duration"])
+             "dt_create", "duration"], params)
         for d in data:
             r_data.append({
                 "dt_provision": datetime.utcfromtimestamp(d["dt_provision"]),

@@ -50,10 +50,11 @@ class Client(object):
     dt_appearance: datetime
     category: Category
     note: int
+    type_client: Category
 
     def __init__(self, id: int = None, name: str = None, phone: str = None, email: str = None, comments: str = None,
                  dt_create: datetime = None, age: int = None, dt_appearance: datetime = None,
-                 category: Category = None, note: int = None):
+                 category: Category = None, note: int = None, type_client: Category = None):
         self.id = id
         self.name = name
         self.phone = phone
@@ -64,6 +65,7 @@ class Client(object):
         self.dt_appearance = dt_appearance
         self.note = note
         self.category = category
+        self.type_client = type_client
 
     @staticmethod
     async def list() -> List["Client"]:
@@ -91,6 +93,8 @@ class Client(object):
             )
             if d.get("business_categories_id") and len(categories_index) > 0:
                 c.category = categories_index.get(d.get("business_categories_id"))
+            if d.get("type_categories_id") and len(categories_index) > 0:
+                c.type_client = categories_index.get(d.get("type_categories_id"))
             c_list.append(c)
         return c_list
 
@@ -99,8 +103,11 @@ class Client(object):
         category_id = None
         if self.category:
             category_id = self.category.id
+        type_id = None
+        if self.type_client:
+            type_id = self.type_client.id
         self.id = await DB.add_client(self.name, self.phone, self.email, self.comments, self.age,
-                                      self.dt_appearance, category_id, self.note)
+                                      self.dt_appearance, category_id, self.note, type_id)
         return self
 
     async def delete(self):
@@ -112,8 +119,11 @@ class Client(object):
         category_id = None
         if self.category:
             category_id = self.category.id
+        type_id = None
+        if self.type_client:
+            type_id = self.type_client.id
         await DB.update_client(self.id, self.name, self.phone, self.email, self.comments, self.age,
-                               self.dt_appearance, category_id, self.note)
+                               self.dt_appearance, category_id, self.note, type_id)
 
 
 class Income(object):
@@ -161,11 +171,11 @@ class Income(object):
         return self
 
     @staticmethod
-    async def list() -> List["Income"]:
+    async def list(dt_start: datetime = None, dt_end: datetime = None) -> List["Income"]:
         c_list: List["Income"] = []
 
         DB = await get_connection()
-        incomes = await DB.list_incomes()
+        incomes = await DB.list_incomes(dt_start, dt_end)
 
         categories_index = {}
         categories = await Category.list()
@@ -207,5 +217,8 @@ class Income(object):
 
     async def update(self):
         DB = await get_connection()
-        await DB.update_income(self.id, self.price, self.client.id, self.category.id, self.comments,
+        client_id = None
+        if self.client is not None:
+            client_id = self.client.id
+        await DB.update_income(self.id, self.price, client_id, self.category.id, self.comments,
                                self.dt_provision, self.duration)
