@@ -24,7 +24,7 @@ class Business(business.Business):
     async def list_clients(self) -> list:
         r_data = []
         data = await self.select(
-            "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note, type_categories_id FROM business_clients",
+            "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note, type_categories_id FROM business_clients ORDER BY dt_appearance",
             ["id", "name", "phone", "email", "comments", "dt_create", "age", "dt_appearance", "business_categories_id", "note", "type_categories_id"])
         for d in data:
             item = {
@@ -80,7 +80,7 @@ class Business(business.Business):
         r_data = []
         params = []
         conditions = []
-        query = "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income "
+        query = "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income  ORDER BY dt_provision DESC"
         if dt_start:
             params.append(time.mktime(dt_start.timetuple()))
             conditions.append("dt_provision > ${}".format(len(params)))
