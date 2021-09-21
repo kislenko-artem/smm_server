@@ -71,5 +71,5 @@ CREATE TABLE IF NOT EXISTS business_income
     dt_provision INTEGER default (datetime('now', 'unixepoch')),
     dt_create INTEGER default (datetime('now', 'unixepoch'))
 );
---start:
 ALTER TABLE business_clients ADD COLUMN type_categories_id NTEGER DEFAULT Null;
+--start:
