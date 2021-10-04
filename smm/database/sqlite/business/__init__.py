@@ -80,7 +80,7 @@ class Business(business.Business):
         r_data = []
         params = []
         conditions = []
-        query = "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income  ORDER BY dt_provision DESC"
+        query = "SELECT id, price, business_clients_id, business_categories_id, comments, dt_provision, dt_create, duration FROM business_income "
         if dt_start:
             params.append(time.mktime(dt_start.timetuple()))
             conditions.append("dt_provision > ${}".format(len(params)))
@@ -89,6 +89,7 @@ class Business(business.Business):
             conditions.append("dt_provision < ${}".format(len(params)))
         if conditions:
             query += "WHERE {}".format(" AND ".join(conditions))
+        query += " ORDER BY dt_provision DESC"
         data = await self.select(
             query,
             ["id", "price", "business_clients_id", "business_categories_id", "comments", "dt_provision",
