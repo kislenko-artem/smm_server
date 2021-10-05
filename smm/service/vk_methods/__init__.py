@@ -42,6 +42,7 @@ class VKMethods(object):
                 "limit": str(limit),
                 "offset": str(offset)
             })
+            print(data)
             if len(data["response"]["items"]) == 0:
                 break
             for d in data["response"]["items"]:
