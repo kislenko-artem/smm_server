@@ -22,10 +22,6 @@ class Categories(Base):
         return json(data, HTTPStatus.OK)
 
     async def post(self, request, id):
-        if id != "":
-            raise InvalidUsage("wrong parameter",
-                               status_code=HTTPStatus.BAD_REQUEST)
-
         data = business.Category(
             name=request.json.get("name"),
             category_type=request.json.get("category_type")
@@ -68,10 +64,6 @@ class Clients(Base):
         return json(data, HTTPStatus.OK)
 
     async def post(self, request, id):
-        if id != "":
-            raise InvalidUsage("wrong parameter",
-                               status_code=HTTPStatus.BAD_REQUEST)
-
         data = business.Client(
             name=request.json.get("name"),
             phone=request.json.get("phone"),
@@ -169,10 +161,6 @@ class Incomes(Base):
         return json(data, HTTPStatus.OK)
 
     async def post(self, request, id):
-        if id != "":
-            raise InvalidUsage("wrong parameter",
-                               status_code=HTTPStatus.BAD_REQUEST)
-
         income = await business.Income().init(
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
