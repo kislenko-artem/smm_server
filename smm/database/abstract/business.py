@@ -14,7 +14,7 @@ class Business(Methods):
     async def del_category(self, id: int):
         raise NotImplemented("")
 
-    async def list_clients(self) -> list:
+    async def list_clients(self, dt_start: datetime = None, dt_end: datetime = None) -> list:
         raise NotImplemented("")
 
     async def add_client(self, name: str, phone: str, email: str, comments: str) -> int:

@@ -21,11 +21,24 @@ class Business(business.Business):
         await self.execute(
             '''DELETE FROM business_categories WHERE id = $1''', (id,))
 
-    async def list_clients(self) -> list:
+    async def list_clients(self, dt_start: datetime = None, dt_end: datetime = None) -> list:
         r_data = []
-        data = await self.select(
-            "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note, type_categories_id FROM business_clients ORDER BY dt_appearance",
-            ["id", "name", "phone", "email", "comments", "dt_create", "age", "dt_appearance", "business_categories_id", "note", "type_categories_id"])
+        params = []
+        conditions = []
+        if dt_start:
+            params.append(time.mktime(dt_start.timetuple()))
+            conditions.append("dt_create > ${}".format(len(params)))
+        if dt_end:
+            params.append(time.mktime(dt_end.timetuple()))
+            conditions.append("dt_create < ${}".format(len(params)))
+        query = "SELECT id, name, phone, email, comments, dt_create, age, dt_appearance, business_categories_id, note, type_categories_id FROM business_clients "
+        if conditions:
+            query += "WHERE {}".format(" AND ".join(conditions))
+        query += " ORDER BY dt_create DESC"
+        data = await self.select(query,
+                                 ["id", "name", "phone", "email", "comments", "dt_create", "age", "dt_appearance",
+                                  "business_categories_id", "note", "type_categories_id"],
+                                 params)
         for d in data:
             item = {
                 "dt_create": datetime.utcfromtimestamp(d["dt_create"]),
@@ -70,7 +83,8 @@ class Business(business.Business):
             SET name=$1, phone=$2, email=$3, comments=$4, age=$5, 
                 dt_appearance=$6, business_categories_id=$7, type_categories_id=$8, note=$9 
             WHERE id = $10''',
-            (name, phone, email, comments, age, dt_appearance_int, business_categories_id, type_categories_id, note, id,))
+            (name, phone, email, comments, age, dt_appearance_int, business_categories_id, type_categories_id, note,
+             id,))
 
     async def del_client(self, id: int):
         await self.execute(
@@ -129,7 +143,7 @@ class Business(business.Business):
         await self.execute(
             '''UPDATE business_income SET 
             price=$1, business_clients_id=$2, business_categories_id=$3, comments=$4, dt_provision=$5 , duration=$6 WHERE id = $7''',
-            (price, business_clients_id, business_categories_id, comments, dt_provision_int, duration, id, ))
+            (price, business_clients_id, business_categories_id, comments, dt_provision_int, duration, id,))
 
     async def del_income(self, id: int):
         await self.execute('''DELETE FROM business_income WHERE id = $1''', (id,))

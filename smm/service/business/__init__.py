@@ -68,11 +68,11 @@ class Client(object):
         self.type_client = type_client
 
     @staticmethod
-    async def list() -> List["Client"]:
+    async def list(dt_start: datetime = None, dt_end: datetime = None) -> List["Client"]:
         c_list: List["Client"] = []
 
         DB = await get_connection()
-        clients = await DB.list_clients()
+        clients = await DB.list_clients(dt_start, dt_end)
 
         categories_index = {}
         categories = await Category.list()

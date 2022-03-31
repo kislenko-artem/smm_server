@@ -43,7 +43,13 @@ class Categories(Base):
 
 class Clients(Base):
     async def get(self, request, id):
-        g = await business.Client().list()
+        dt_start = None
+        dt_end = None
+        if request.args.get("dt_start"):
+            dt_start = datetime.strptime(request.args.get("dt_start"), "%Y-%m-%dT%H:%M:%S")
+        if request.args.get("dt_end"):
+            dt_end = datetime.strptime(request.args.get("dt_end"), "%Y-%m-%dT%H:%M:%S")
+        g = await business.Client().list(dt_start, dt_end)
         d_list = []
         for d in g:
             income = d.__dict__
