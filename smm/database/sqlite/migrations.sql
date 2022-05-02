@@ -71,5 +71,18 @@ CREATE TABLE IF NOT EXISTS business_income
     dt_provision INTEGER default (datetime('now', 'unixepoch')),
     dt_create INTEGER default (datetime('now', 'unixepoch'))
 );
-ALTER TABLE business_clients ADD COLUMN type_categories_id NTEGER DEFAULT Null;
+ALTER TABLE business_clients RENAME COLUMN note TO business_subcategories_id;
+--split
+UPDATE business_clients SET business_subcategories_id = NULL;
+--split
+ALTER TABLE business_income ADD COLUMN business_subcategories_id INTEGER DEFAULT null;
+--split
+CREATE TABLE IF NOT EXISTS business_subcategories
+(
+    id INTEGER
+        constraint business_subcategories_pk
+            primary key autoincrement,
+    name TEXT not null,
+    business_category_id INTEGER not null
+);
 --start:

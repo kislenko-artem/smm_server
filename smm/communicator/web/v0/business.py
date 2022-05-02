@@ -5,7 +5,7 @@ from sanic.exceptions import InvalidUsage
 from sanic.response import json
 
 from smm.communicator.web.v0.base import Base
-from smm.service import business
+from smm.service import business, list_to_dict
 
 
 class Categories(Base):
@@ -13,7 +13,7 @@ class Categories(Base):
         g = await business.Category().list()
         d_list = []
         for d in g:
-            if d.category_type != id:
+            if id != "all" and d.category_type != id:
                 continue
             d_list.append(d.__dict__)
         data = {
@@ -37,6 +37,42 @@ class Categories(Base):
         return json({"success": True}, HTTPStatus.OK)
 
 
+class SubCategories(Base):
+    async def get(self, _request, id):
+        g = await business.SubCategory().list()
+        d_list = []
+        for d in g:
+            income = d.__dict__
+            if income.get("category"):
+                income["category"] = income.get("category").__dict__
+            d_list.append(income)
+        data = {
+            "results": d_list
+        }
+        return json(data, HTTPStatus.OK)
+
+    async def post(self, request, id):
+        data = business.SubCategory(
+            name=request.json.get("name"),
+        )
+        categories_index = {}
+        categories = await business.Category.list()
+        if request.json.get("category_id"):
+            for d in categories:
+                categories_index[d.id] = d
+            data.category = categories_index[request.json.get("category_id")]
+
+        d = await data.add()
+        return json({"id": d.id}, HTTPStatus.OK)
+
+    async def delete(self, request, id):
+        if id == "":
+            raise InvalidUsage("wrong parameter",
+                               status_code=HTTPStatus.BAD_REQUEST)
+        await business.SubCategory(_id=id).delete()
+        return json({"success": True}, HTTPStatus.OK)
+
+
 class Clients(Base):
     async def get(self, request, id):
         dt_start = None
@@ -46,18 +82,7 @@ class Clients(Base):
         if request.args.get("dt_end"):
             dt_end = datetime.strptime(request.args.get("dt_end"), "%Y-%m-%dT%H:%M:%S")
         g = await business.Client().list(dt_start, dt_end)
-        d_list = []
-        for d in g:
-            income = d.__dict__
-            if income.get("category"):
-                income["category"] = income.get("category").__dict__
-            if income.get("type_client"):
-                income["type_client"] = income.get("type_client").__dict__
-            if income.get("dt_appearance"):
-                income["dt_appearance"] = income.get("dt_appearance").isoformat()
-            if income.get("dt_create"):
-                income["dt_create"] = income.get("dt_create").isoformat()
-            d_list.append(income)
+        d_list = list_to_dict(g)
         data = {
             "results": d_list
         }
@@ -70,7 +95,6 @@ class Clients(Base):
             email=request.json.get("email"),
             comments=request.json.get("comments"),
             age=request.json.get("age"),
-            note=request.json.get("note"),
         )
         if request.json.get("dt_appearance"):
             data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
@@ -80,6 +104,12 @@ class Clients(Base):
             for d in categories:
                 categories_index[d.id] = d
             data.category = categories_index[request.json.get("category_id")]
+        subcategories_index = {}
+        subcategories = await business.SubCategory.list()
+        if request.json.get("subcategory_id") is not None:
+            for d in subcategories:
+                subcategories_index[d.id] = d
+            data.subcategory = subcategories_index[request.json.get("subcategory_id")]
         if request.json.get("type_client_id"):
             for d in categories:
                 categories_index[d.id] = d
@@ -99,7 +129,6 @@ class Clients(Base):
             email=request.json.get("email"),
             comments=request.json.get("comments"),
             age=request.json.get("age"),
-            note=request.json.get("note"),
         )
         if request.json.get("dt_appearance"):
             data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
@@ -109,6 +138,12 @@ class Clients(Base):
             for d in categories:
                 categories_index[d.id] = d
             data.category = categories_index[request.json.get("category_id")]
+        subcategories_index = {}
+        subcategories = await business.SubCategory.list()
+        if request.json.get("subcategory_id") is not None:
+            for d in subcategories:
+                subcategories_index[d.id] = d
+            data.subcategory = subcategories_index[request.json.get("subcategory_id")]
         if request.json.get("type_client_id"):
             for d in categories:
                 categories_index[d.id] = d
@@ -134,27 +169,7 @@ class Incomes(Base):
         if request.args.get("dt_end"):
             dt_end = datetime.strptime(request.args.get("dt_end"), "%Y-%m-%dT%H:%M:%S")
         g = await business.Income().list(dt_start, dt_end)
-        d_list = []
-        for d in g:
-            income = d.__dict__
-            if income.get("client"):
-                if isinstance(income.get("client"), dict) is False:
-                    income["client"] = income.get("client").__dict__
-                if isinstance(income["client"].get("category"), dict) is False:
-                    income["client"]["category"] = income["client"].get("category").__dict__
-                if income["client"].get("type_client") and isinstance(income["client"].get("type_client"), dict) is False:
-                    income["client"]["type_client"] = income["client"].get("type_client").__dict__
-                if isinstance(income["client"].get("dt_appearance"), str) is False:
-                    income["client"]["dt_appearance"] = income["client"].get("dt_appearance").isoformat()
-                if isinstance(income["client"].get("dt_create"), str) is False:
-                    income["client"]["dt_create"] = income["client"].get("dt_create").isoformat()
-            if income.get("category"):
-                income["category"] = income.get("category").__dict__
-            if income.get("dt_provision"):
-                income["dt_provision"] = income.get("dt_provision").isoformat()
-            if income.get("dt_create"):
-                income["dt_create"] = income.get("dt_create").isoformat()
-            d_list.append(income)
+        d_list = list_to_dict(g)
         data = {
             "results": d_list
         }
@@ -164,6 +179,7 @@ class Incomes(Base):
         income = await business.Income().init(
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
+            subcategory_id=request.json.get("subcategory_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
             duration=request.json.get("duration"),
@@ -181,6 +197,7 @@ class Incomes(Base):
             id=id,
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
+            subcategory_id=request.json.get("subcategory_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
             duration=request.json.get("duration"),

@@ -1,7 +1,7 @@
 import sanic
 
 from smm.communicator.web.v0 import (Profiles, Count, VKFeed, VKGroups, VKStatGroups, VKWall, Categories, Clients,
-                                     Incomes)
+                                     SubCategories, Incomes)
 
 
 class WebRouter(object):
@@ -14,6 +14,7 @@ class WebRouter(object):
         app.add_route(VKStatGroups.as_view(), "/v0/vk/stat/groups/<id>")
         app.add_route(VKWall.as_view(), "/v0/vk/wall/<id>")
 
+        app.add_route(SubCategories.as_view(), "/v0/business/subcategories/<id>")
         app.add_route(Categories.as_view(), "/v0/business/categories/<id>")
         app.add_route(Clients.as_view(), "/v0/business/clients/<id>")
         app.add_route(Incomes.as_view(), "/v0/business/incomes/<id>")

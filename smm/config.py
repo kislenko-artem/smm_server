@@ -5,6 +5,7 @@ from betterconf import Config, field
 
 BASE_DIR = path.dirname(__file__)
 
+
 class AppConfig(Config):
     app_host = field("APP_HOST", default="0.0.0.0")
     app_port = field("APP_PORT", default=9999)
