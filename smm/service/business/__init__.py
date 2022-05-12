@@ -239,7 +239,7 @@ class Income(object):
             subcategories = await SubCategory.list()
             for d in subcategories:
                 subcategories_index[d.id] = d
-            self.subcategory = subcategories_index[subcategory_id]
+            self.subcategory = subcategories_index.get(subcategory_id)
         return self
 
     @staticmethod
