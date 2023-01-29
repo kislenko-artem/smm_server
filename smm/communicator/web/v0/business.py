@@ -8,6 +8,31 @@ from smm.communicator.web.v0.base import Base
 from smm.service import business, list_to_dict
 
 
+class Offices(Base):
+    async def get(self, request, id):
+        g = await business.Office().list()
+        d_list = []
+        for d in g:
+            d_list.append(d.__dict__)
+        data = {
+            "results": d_list
+        }
+        return json(data, HTTPStatus.OK)
+
+    async def post(self, request, id):
+        data = business.Office(
+            name=request.json.get("name"),
+        )
+        d = await data.add()
+        return json({"id": d.id}, HTTPStatus.OK)
+
+    async def delete(self, request, id):
+        if id == "":
+            raise InvalidUsage("wrong parameter",
+                               status_code=HTTPStatus.BAD_REQUEST)
+        await business.Office(id=id).delete()
+        return json({"success": True}, HTTPStatus.OK)
+
 class Categories(Base):
     async def get(self, request, id):
         g = await business.Category().list()
@@ -77,11 +102,14 @@ class Clients(Base):
     async def get(self, request, id):
         dt_start = None
         dt_end = None
+        office_id = None
         if request.args.get("dt_start"):
             dt_start = datetime.strptime(request.args.get("dt_start"), "%Y-%m-%dT%H:%M:%S")
         if request.args.get("dt_end"):
             dt_end = datetime.strptime(request.args.get("dt_end"), "%Y-%m-%dT%H:%M:%S")
-        g = await business.Client().list(dt_start, dt_end)
+        if request.args.get("office_id"):
+            office_id = int(request.args.get("office_id"))
+        g = await business.Client().list(dt_start, dt_end, office_id)
         d_list = list_to_dict(g)
         data = {
             "results": d_list
@@ -97,7 +125,11 @@ class Clients(Base):
             age=request.json.get("age"),
         )
         if request.json.get("dt_appearance"):
-            data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+            try:
+                dt = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                dt = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S:00")
+            data.dt_appearance = dt
         categories_index = {}
         categories = await business.Category.list()
         if request.json.get("category_id"):
@@ -114,6 +146,12 @@ class Clients(Base):
             for d in categories:
                 categories_index[d.id] = d
             data.type_client = categories_index[request.json.get("type_client_id")]
+        offices_index = {}
+        offices = await business.Office.list()
+        if request.json.get("office_id") is not None:
+            for d in offices:
+                offices_index[d.id] = d
+            data.office = offices_index[request.json.get("office_id")]
         d = await data.add()
         return json({"id": d.id}, HTTPStatus.OK)
 
@@ -131,7 +169,11 @@ class Clients(Base):
             age=request.json.get("age"),
         )
         if request.json.get("dt_appearance"):
-            data.dt_appearance = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+            try:
+                dt = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                dt = datetime.strptime(request.json.get("dt_appearance"), "%Y-%m-%d %H:%M:%S:00")
+            data.dt_appearance = dt
         categories_index = {}
         categories = await business.Category.list()
         if request.json.get("category_id") is not None:
@@ -148,6 +190,12 @@ class Clients(Base):
             for d in categories:
                 categories_index[d.id] = d
             data.type_client = categories_index[request.json.get("type_client_id")]
+        offices_index = {}
+        offices = await business.Office.list()
+        if request.json.get("office_id") is not None:
+            for d in offices:
+                offices_index[d.id] = d
+            data.office = offices_index[request.json.get("office_id")]
 
         await data.update()
         return json({"success": True}, HTTPStatus.OK)
@@ -164,11 +212,14 @@ class Incomes(Base):
     async def get(self, request, id):
         dt_start = None
         dt_end = None
+        office_id = None
         if request.args.get("dt_start"):
             dt_start = datetime.strptime(request.args.get("dt_start"), "%Y-%m-%dT%H:%M:%S")
         if request.args.get("dt_end"):
             dt_end = datetime.strptime(request.args.get("dt_end"), "%Y-%m-%dT%H:%M:%S")
-        g = await business.Income().list(dt_start, dt_end)
+        if request.args.get("office_id"):
+            office_id = int(request.args.get("office_id"))
+        g = await business.Income().list(dt_start, dt_end, office_id)
         d_list = list_to_dict(g)
         data = {
             "results": d_list
@@ -176,14 +227,19 @@ class Incomes(Base):
         return json(data, HTTPStatus.OK)
 
     async def post(self, request, id):
+        try:
+            dt = datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            dt = datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S:00")
         income = await business.Income().init(
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             subcategory_id=request.json.get("subcategory_id"),
+            office_id=request.json.get("office_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
             duration=request.json.get("duration"),
-            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
+            dt_provision=dt
         )
         d = await income.add()
         return json({"id": d.id}, HTTPStatus.OK)
@@ -192,16 +248,21 @@ class Incomes(Base):
         if id == "":
             raise InvalidUsage("wrong parameter",
                                status_code=HTTPStatus.BAD_REQUEST)
+        try:
+            dt = datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            dt = datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S:00")
 
         income = await business.Income().init(
             id=id,
             price=request.json.get("price"),
             category_id=request.json.get("category_id"),
             subcategory_id=request.json.get("subcategory_id"),
+            office_id=request.json.get("office_id"),
             client_id=request.json.get("client_id"),
             comments=request.json.get("comments"),
             duration=request.json.get("duration"),
-            dt_provision=datetime.strptime(request.json.get("dt_provision"), "%Y-%m-%d %H:%M:%S")
+            dt_provision=dt
         )
         await income.update()
         return json({"success": True}, HTTPStatus.OK)

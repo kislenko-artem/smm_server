@@ -85,4 +85,17 @@ CREATE TABLE IF NOT EXISTS business_subcategories
     name TEXT not null,
     business_category_id INTEGER not null
 );
+--split
+CREATE TABLE business_offices (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT
+);
+--split
+INSERT INTO business_offices
+(name)
+VALUES('Лаборатория');
+--split
+INSERT INTO business_offices
+(name)
+VALUES('Витебский');
 --start:
